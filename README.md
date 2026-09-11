@@ -17,6 +17,18 @@ In the design stage. No installable build is available yet.
 
 See the [design document](DESIGN.md) for the architecture, implementation roadmap, and evaluation plan.
 
+## Roadmap
+
+The design proposes these phases, with roughly 12 weeks of estimated work:
+
+- [ ] **0. Quality pilot (1 week):** test label quality before building the full system.
+- [ ] **1. Rules-only extension (2 weeks):** detect missing names, apply rules, and export findings.
+- [ ] **2. Local text inference (2 weeks):** add the Rust daemon, local model, and cache.
+- [ ] **3. Scheduling (1 week):** prioritize upcoming controls, stream labels, and announce late results.
+- [ ] **4. Desktop app (2 weeks):** add the tray UI, model downloads, and per-site settings.
+- [ ] **5. Vision and developer tools (2 weeks):** support image descriptions and a DevTools panel.
+- [ ] **6. Evaluation and release (2 weeks):** test with screen reader users and prepare distribution.
+
 ## License
 
 [MIT](LICENSE). Model weights are subject to their own licenses.

@@ -72,6 +72,7 @@ Use the reference and markup/context to assess intent; where the reference is it
 | 4 | Correct and useful, with minor wording issues |
 | 5 | Correct, concise, and natural |
 
+"""
 Tranco
 (big ranked list of websites)
 ↓
@@ -113,5 +114,5 @@ review.html
 ↓
 evaluate.py review
 (reads human ratings and decides GO / NO-GO)
-
+"""
 

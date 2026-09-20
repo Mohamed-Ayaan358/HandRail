@@ -1,0 +1,19 @@
+{
+  "name": "handrail",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "pilot:collect": "node pilot/collect.mjs",
+    "test": "node --test pilot/tests/*.test.mjs && python3 -m unittest discover -s pilot/tests -p 'test_*.py'"
+  },
+  "dependencies": {
+    "dom-accessibility-api": "0.7.1",
+    "jsdom": "26.1.0",
+    "robots-parser": "3.0.1"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.19.0"
+}

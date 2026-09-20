@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HandRail pilot review</title>
+<style>
+body{font:18px/1.5 system-ui,sans-serif;max-width:850px;margin:2rem auto;padding:0 1rem;background:#fafafa;color:#16222b}h1{font-size:1.8rem}label{display:block;margin-top:1rem}input,select,textarea,button{font:inherit;padding:.5rem}textarea{width:95%}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eee;padding:1rem}button{margin:1rem .5rem 0 0}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #056bd1;outline-offset:3px}.hint{color:#425563}#status{min-height:1.5rem}dt{font-weight:bold}dd{margin:0 0 1rem}
+</style>
+<h1>HandRail quality review</h1>
+<p>Open the run's <code>review.csv</code>. This page works offline; nothing is sent to a server. Download your progress before closing.</p>
+<label for="file">Review CSV <input id="file" type="file" accept=".csv,text/csv"></label>
+<p id="status" role="status" aria-live="polite"></p>
+<main id="review" hidden>
+<h2 id="position" tabindex="-1"></h2>
+<dl><dt>Original author label (may be imperfect)</dt><dd id="reference"></dd><dt>Generated label</dt><dd id="prediction"></dd><dt>Accepted for application?</dt><dd id="accepted"></dd></dl>
+<details><summary>Element markup and page context</summary><pre id="markup"></pre><pre id="context"></pre></details>
+<label for="rating">Quality rating</label>
+<select id="rating"><option value="">Not reviewed</option value="1">1 - Withheld, unusable, or wrong</option><option value="2">2 - Major omissions</option><option value="3">3 - Partly useful</option><option value="4">4 - Correct; minor issues</option><option value="5">5 - Correct and concise</option></select>
+<label for="misleading">Does the accepted label suggest the wrong action or object?</label>
+<select id="misleading"><option value="">Not reviewed</option value="no">No</option><option value="yes">Yes</option></select>
+<p class="hint">A withheld label is rating 1 and misleading “No.” Assess intent, not exact wording.</p>
+<label for="reviewer">Reviewer identifier (use a pseudonym)</label><input id="reviewer" autocomplete="off">
+<label for="notes">Notes</label><textarea id="notes" rows="3"></textarea>
+<nav aria-label="Review navigation"><button id="previous">Previous</button><button id="next">Next</button><button id="download">Download review CSV</button></nav>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);let rows=[],headers=[],index=0,dirty=false;
+function parseCSV(text){const result=[];let row=[],cell='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){cell+='"';i++;}else quoted=!quoted;}else if(c===','&&!quoted){row.push(cell);cell='';}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);result.push(row);row=[];cell='';}else cell+=c;}if(quoted)throw Error('Unclosed quoted cell');if(cell||row.length){row.push(cell);result.push(row);}return result;}
+function save(){if(!rows.length)return;for(const key of ['rating','misleading','reviewer','notes'])rows[index][key]=$(key).value;}
+function display(){const r=rows[index];$('position').textContent=`Item ${index+1} of ${rows.length}`;for(const k of ['reference','prediction','accepted'])$(k).textContent=r[k]||'(empty)';$('markup').textContent=r.html;$('context').textContent=r.context;for(const k of ['rating','misleading','reviewer','notes'])$(k).value=r[k]||'';$('previous').disabled=index===0;$('next').disabled=index===rows.length-1;}
+$('file').addEventListener('change',async()=>{try{if(dirty&&!confirm('Unsaved review edits will be replaced. Continue?'))return;const parsed=parseCSV(await $('file').files[0].text());const h=parsed.shift();for(const k of ['id','reference','prediction','accepted','html','context','rating','misleading','reviewer','notes'])if(!h.includes(k))throw Error(`Missing column ${k}`);const incoming=parsed.filter(r=>r.some(Boolean)).map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]||''])));if(!incoming.length)throw Error('Empty review');if(incoming.length>200)throw Error('Expected at most 200 sampled rows');headers=h;rows=incoming;index=0;dirty=false;$('review').hidden=false;display();$('status').textContent=`Loaded ${rows.length} items. Changes remain in this page until downloaded.`;}catch(e){$('status').textContent=e.message;}});
+for(const k of ['rating','misleading','reviewer','notes'])$(k).addEventListener('input',()=>{dirty=true;});
+for(const [id,step] of [['previous',-1],['next',1]])$(id).addEventListener('click',()=>{save();index+=step;display();$('position').focus();});
+$('download').addEventListener('click',()=>{save();const safe=v=>{let s=String(v??'');if(/^[\s]*[=+@-]/.test(s))s="'"+s;return '"'+s.replaceAll('"','""')+'"';};const csv=[headers,...rows.map(r=>headers.map(k=>r[k]))].map(r=>r.map(safe).join(',')).join('\r\n')+'\r\n';const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='review-completed.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);dirty=false;$('status').textContent='Review downloaded. Use this file with the review command.';});
+window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
+</script>
+</html>

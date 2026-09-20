@@ -1,0 +1,2 @@
+# Optional; core pilot uses the Python standard library only.
+bert-score==0.3.13

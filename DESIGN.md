@@ -4,7 +4,7 @@
 
 Handrail is a planned, local-first browser extension that fills in missing accessible names so screen readers can announce useful labels instead of just “button,” “link,” or “image.” It combines deterministic rules, a local cache, and optional small language and vision models running through a companion desktop app.
 
-> **Status: design stage (Draft v0.2).** This repository currently contains project documentation and a license. The extension, daemon, model integrations, and benchmarks described below are planned, not released or validated.
+> **Status: design stage (Draft v0.2).** This repository contains project documentation, a license, and an experimental quality-pilot harness. The extension, daemon, model integrations, and benchmarks described below are planned, not released or validated.
 
 ## Why Handrail?
 
@@ -171,9 +171,9 @@ Later candidates include a Native Messaging shim, optional browser-native infere
 
 ## Getting started
 
-There is no installable build or runnable source code yet. This repository establishes the design and implementation roadmap; installation and development commands will be added alongside working code.
+There is no installable extension build yet. The experimental quality-pilot harness is runnable locally. This repository establishes the design and implementation roadmap; installation and development commands will be added alongside working code.
 
-The first milestone is the quality pilot, followed by a standalone rules-only extension.
+The [quality pilot](pilot/README.md) is in progress; a standalone rules-only extension follows the evaluation decision.
 
 ## Open questions
 

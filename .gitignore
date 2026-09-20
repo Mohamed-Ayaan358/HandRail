@@ -1,0 +1,8 @@
+node_modules/
+.local/
+__pycache__/
+*.pyc
+pilot/data/corpus.jsonl
+pilot/data/collection.json
+pilot/data/tranco.csv
+pilot/results/runs/

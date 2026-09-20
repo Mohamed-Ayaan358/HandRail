@@ -13,7 +13,7 @@ HandRail combines simple rules, cached labels, and optional AI models running on
 
 ## Status
 
-In the design stage. No installable build is available yet.
+Phase 0 is in progress: the [quality pilot](pilot/README.md) provides dataset collection, local inference, and human-review tools. No installable extension is available yet.
 
 See the [design document](DESIGN.md) for the architecture, implementation roadmap, and evaluation plan.
 
@@ -21,7 +21,7 @@ See the [design document](DESIGN.md) for the architecture, implementation roadma
 
 The design proposes these phases, with roughly 12 weeks of estimated work:
 
-- [ ] **0. Quality pilot (1 week):** test label quality before building the full system.
+- [ ] **0. Quality pilot (1 week):** test label quality before building the full system ([pilot setup](pilot/README.md)).
 - [ ] **1. Rules-only extension (2 weeks):** detect missing names, apply rules, and export findings.
 - [ ] **2. Local text inference (2 weeks):** add the Rust daemon, local model, and cache.
 - [ ] **3. Scheduling (1 week):** prioritize upcoming controls, stream labels, and announce late results.

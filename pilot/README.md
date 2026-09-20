@@ -72,32 +72,46 @@ Use the reference and markup/context to assess intent; where the reference is it
 | 4 | Correct and useful, with minor wording issues |
 | 5 | Correct, concise, and natural |
 
-Mark misleading `yes` when an **accepted** label suggests a wrong action or object, especially a destructive action. An abstention is rating 1 and misleading `no`: withholding does not help coverage, but it is not a false instruction. The final human review must be performed by people; automated label matching cannot supply these ratings.
+Tranco
+(big ranked list of websites)
+↓
+collect.mjs
+(picks websites + downloads their HTML)
+↓
+extract.mjs
+(finds labeled controls, hides their labels, creates test examples)
+↓
+corpus.jsonl
+(the 1,000-item test dataset)
+↓
+evaluate.py
+(runs HandRail on the dataset)
+↓
+rules/
+(rules only)
 
-```sh
-python3 pilot/evaluate.py review \
-  --run pilot/results/runs/cascade \
-  --csv pilot/results/runs/cascade/review.csv
-```
+text/
+(Qwen only)
 
-The script reports **PENDING** unless there are at least 1,000 real items, at least 50 pages in each stratum, and the complete 200-item review sample. A provisional text-pilot GO requires >=75% rated 4/5 or better and <5% misleading; otherwise it reports NO-GO. It cannot verify a reviewer's expertise. Even a text-pilot GO does not approve the unevaluated vision tier or establish screen reader compatibility.
+cascade/
+(rules first, Qwen if rules fail)
+↓
+predictions.jsonl
+(all predictions for every item)
+↓
+summary.json
+(overall scores + timing + coverage)
+↓
+report.md
+(readable experiment summary)
+↓
+review.csv
+(200 random examples for human review)
+↓
+review.html
+(simple browser form to rate those 200)
+↓
+evaluate.py review
+(reads human ratings and decides GO / NO-GO)
 
-Optional BERTScore and independent local LLM-judge adapters are available in `semantic.py`, but are not part of the initial run. They require additional models; the pilot never downloads them implicitly.
 
-```sh
-# Optional semantic matching; additional Python packages and model download.
-python3 -m pip install -r pilot/requirements-semantic.txt
-python3 pilot/semantic.py --run pilot/results/runs/cascade --metric bertscore --allow-model-download
-# Optional diagnostic judge: supply a different model already installed in Ollama.
-python3 pilot/semantic.py --run pilot/results/runs/cascade --metric judge --judge-model YOUR_LOCAL_JUDGE
-```
-
-The judge adapter rejects using the exact generation model as its own judge. A different tag is not proof of independence; choose and validate the judge separately. The gate does not consume automatic judge scores. Exact matching can penalize valid synonyms; do not use it as the go/no-go score. Independent semantic scoring and the 200-element human review remain follow-up evaluation work, alongside the full vision experiment.
-
-## Outputs and reproducibility
-
-Raw collected page snippets, ranking data, review identities, runtime binaries, and model weights are ignored by Git. Each inference run contains `metadata.json`, `predictions.jsonl`, `summary.json`, `report.md`, and `review.csv`. Keep these locally to reproduce or audit a run. Share only deliberately reviewed aggregate reports under `pilot/results/`.
-
-A changed website can change a future collection even with the same ranking and seed. The manifest preserves capture timestamps and HTML hashes; retain the ignored corpus to reproduce inference exactly. The generated report describes static collection limits, and failed domains remain in the collection log.
-
-References: [Ollama generate API](https://docs.ollama.com/api/generate), [Tranco ranking](https://tranco-list.eu/), [accessible-name implementation](https://github.com/eps1lon/dom-accessibility-api).
